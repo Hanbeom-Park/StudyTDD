@@ -1,18 +1,37 @@
 package chap02;
 
 public class PasswordStrengthMeter {
-    public PasswordStrength meter(String s){
-        if(s.length()<8){
-            return PasswordStrength.NORMAL;
-        }
-        boolean containsNum= false;
+    public PasswordStrength meter(String s) {
+        if (s == null || s.isEmpty()) return PasswordStrength.INVALID;
+        int metCounts = getMetCriteriaCounts(s);
+        if(metCounts<=1) return PasswordStrength.WEAK;
+        if(metCounts==2) return PasswordStrength.NORMAL;
+        return PasswordStrength.STRONG;
+    }
+
+    private int getMetCriteriaCounts(String s) {
+        int metCounts=0;
+        if(s.length()>=8) metCounts++;
+        if(meetsContainingNumberCriteria(s)) metCounts++;
+        if(meetsContainingUpperCriteria(s)) metCounts++;
+        return metCounts;
+    }
+
+    private boolean meetsContainingUpperCriteria(String s) {
         for (char ch : s.toCharArray()) {
-            if (ch >= '0' && ch <= '9') {
-                containsNum = true;
-                break;
+            if (Character.isUpperCase(ch)) {
+                return true;
             }
         }
-        if(!containsNum) return PasswordStrength.NORMAL;
-        return PasswordStrength.STRONG;
+        return false;
+    }
+
+    private boolean meetsContainingNumberCriteria(String s) {
+        for (char ch : s.toCharArray()) {
+            if (ch >= '0' && ch <= '9') {
+                return true;
+            }
+        }
+        return false;
     }
 }
